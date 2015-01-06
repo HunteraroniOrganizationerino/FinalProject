@@ -1,4 +1,4 @@
-int x, y, velocity, accel;
+float x, y, velocity, accel;
 PImage magamen;
 
 void setup() {
@@ -7,13 +7,13 @@ void setup() {
   magamen = loadImage("magamen.png"); 
   x = width/2;
   y = height/2;
-  velocity = -30;
-  accel=+3;
+  velocity = -8;
+  accel=.3;
 }
 
 void draw() {
   background(0);
-  image(magamen, x, y);
+  image(magamen, x, y, 50, 60);
   if (keyPressed == true) { 
     if (key == CODED) {
       if (keyCode == UP) {
@@ -24,7 +24,7 @@ void draw() {
       }
       if (y > height/2 + 1) {
         y = height/2;
-        velocity = -30;
+        velocity = -8;
       }
       if (keyCode == DOWN) {
         y+=10;
