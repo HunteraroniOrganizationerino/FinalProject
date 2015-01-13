@@ -34,35 +34,35 @@ void draw() {
   fill(0,255,0);
   rect(x2, y2, 25, 25);
   if (keyPressed) {
-    if (keyCode == UP && vely1 != 2) {
+    if (key == 'w' && vely1 != 2) {
       velx1 = 0;
       vely1 = -2;
     }
-    if (keyCode == DOWN && vely1 != -2) {
+    if (key == 's' && vely1 != -2) {
       velx1 = 0;
       vely1 = 2;
     }
-    if (keyCode == RIGHT && velx1 != -2) {
+    if (key == 'd' && velx1 != -2) {
       velx1 = 2;
       vely1 = 0;
     }
-    if (keyCode == LEFT && velx1 != 2) {
+    if (key == 'a' && velx1 != 2) {
       velx1 = -2;
       vely1 = 0;
     }
-    if (key == 'w' && vely2 != 2) {
+    if (keyCode == UP && vely2 != 2) {
       velx2 = 0;
       vely2 = -2;
     }
-    if (key == 's' && vely2 != -2) {
+    if (keyCode == DOWN && vely2 != -2) {
       velx2 = 0;
       vely2 = 2;
     }
-    if (key == 'a' && velx2 != -2) {
+    if (keyCode == LEFT && velx2 != -2) {
       velx2 = 2;
       vely2 = 0;
     }
-    if (key == 'd' && velx2 != 2) {
+    if (keyCode == RIGHT && velx2 != 2) {
       velx2 = -2;
       vely2 = 0;
     }

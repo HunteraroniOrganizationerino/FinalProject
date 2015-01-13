@@ -10,8 +10,10 @@ class Particle{
  }  
   
   void create(){
+    noStroke();
     fill(pr, pg, pb);
     rect(px, py, 5, 5);
+    stroke(255);
   }
  
  }
