@@ -4,6 +4,7 @@ ArrayList<Particle> rlist = new ArrayList<Particle>();
 ArrayList<Particle> glist = new ArrayList<Particle>();
 
 void setup() {
+  //boolean if mouse pressed in box {draw loop} 
   size(displayWidth, displayHeight);
   background(0);
   stroke(255);
