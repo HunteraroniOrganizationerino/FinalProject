@@ -1,5 +1,5 @@
-int x1, x2, y1, y2, time;
-int velx1, vely1, velx2, vely2;
+int x1, y1, x2, y2, velx1, vely1, velx2, vely2;
+boolean game;
 ArrayList<Particle> rlist = new ArrayList<Particle>();
 ArrayList<Particle> glist = new ArrayList<Particle>();
 
@@ -14,9 +14,16 @@ void setup() {
   y2 = 75;
   velx1 = velx2 = 2;
   rectMode(CENTER);
+  game = false;
 }
 
 void draw() {
+  if(keyPressed){
+   if(key == ENTER){
+   game = true;
+   } 
+  }
+  if(game) {
   background(0);
   for (int i = 0; i < 30; i++) {
     line(0, 25+ 50*i, width, 25+50*i);
@@ -72,10 +79,17 @@ void draw() {
   for (int i = rlist.size () - 1; i >= 0; i--) {
     Particle r = rlist.get(i);
     r.create();
+    if(r.px == x1 && r.py == y1 || r.px == x2 && r.py == y2){
+      game = false;
+  }
   }
   for (int i = glist.size () - 1; i >= 0; i--) {
     Particle g = glist.get(i);
-    g.create();
+    g.create();  
+    if(g.px == x1 && g.py == y1 || g.px == x2 && g.py == y2){
+      game = false;
+  }
+  }
   }  
 }
 
