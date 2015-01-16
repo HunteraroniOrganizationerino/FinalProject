@@ -29,7 +29,7 @@ void draw() {
     line(0, 25+ 50*i, width, 25+50*i);
     line(25+ 50*i, 0, 25+ 50*i, height);
   }
-  if (frameCount % 3 == 0) {
+  if (frameCount % 1 == 0) {
     rlist.add(new Particle(x1, y1, 255, 0, 0));
     glist.add(new Particle(x2, y2, 0, 255, 0));
   }
@@ -79,14 +79,14 @@ void draw() {
   for (int i = rlist.size () - 1; i >= 0; i--) {
     Particle r = rlist.get(i);
     r.create();
-    if(r.px == x1 && r.py == y1 || r.px == x2 && r.py == y2){
+    if(r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999 || r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999){
       game = false;
   }
   }
   for (int i = glist.size () - 1; i >= 0; i--) {
     Particle g = glist.get(i);
     g.create();  
-    if(g.px == x1 && g.py == y1 || g.px == x2 && g.py == y2){
+    if(g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999 || g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999){
       game = false;
   }
   }
