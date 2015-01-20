@@ -1,8 +1,10 @@
-int x1, y1, x2, y2, velx1, vely1, velx2, vely2;
-String rdir, gdir; 
-boolean game;
+int x1, y1, x2, y2, velx1, vely1, velx2, vely2, currentFrame;
+float px, py;
+String rdir, gdir, rInvince, gInvince;
+boolean game; 
 ArrayList<Particle> rlist = new ArrayList<Particle>();
 ArrayList<Particle> glist = new ArrayList<Particle>();
+ArrayList<Particle> powerup = new ArrayList<Particle>();
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -12,13 +14,17 @@ void setup() {
   y1 = 75;
   x2 = width - 75;
   y2 = 75;
+  px = width/2;
+  py = 3*height/4;
+
   velx1 = velx2 = 2;
   rectMode(CENTER);
   game = false;
+  rInvince = gInvince = "false";
 }
 
 void draw() {
-  
+
   //sets each movement as a string to represent direction
   directionSetup();
 
@@ -39,8 +45,13 @@ void draw() {
 
     //adds a red and green particle to each of the array lists
     if (frameCount % 1 == 0) {
-      rlist.add(new Particle(x1, y1, 255, 0, 0));
-      glist.add(new Particle(x2, y2, 0, 255, 0));
+      rlist.add(new Particle(x1, y1, 255, 0, 0, 5));
+      glist.add(new Particle(x2, y2, 0, 255, 0, 5));
+    }
+
+    //adds a powerup
+    for (int i = 0; i < 1; i++) {
+      powerup.add(new Particle(px, py, 0, 100, 255, 20));
     }
 
     //changes the location of the players through velocities
@@ -59,16 +70,49 @@ void draw() {
     //prevents moving in the direction opposite to current movement
     movement();   
 
+    if(rInvince
+
+    for (int i = powerup.size () - 1; i >= 0; i--) {
+      Particle p = powerup.get(i);
+      if (p.px < x1 + 9.999 && p.px > x1 - 9.999 && p.py > y1 - 9.999 && p.py < y1 + 9.999) {
+        gInvince = "true";
+        frameCount = currentFrame;
+        powerup.remove(i);
+        px = random(200, width - 200);
+        py = random(200, height - 200);
+      } 
+      if (p.px < x2 + 9.999 && p.px > x2 - 9.999 && p.py > y2 - 9.999 && p.py < y2 + 9.999) {
+        rInvince = "true";
+        frameCount = currentFrame;
+        powerup.remove(i);
+        px = random(200, width - 200);
+        py = random(200, height - 200);
+      }
+    }
+
+    if (rInvince == "true" && frameCount - currentFrame > 180) {
+      rInvince = "false";
+    }
+    if (gInvince == "true" && frameCount - currentFrame > 180) {
+      gInvince = "false";
+    }
+
+    //draw a powerup particle
+    for (int i = powerup.size () - 1; i >= 0; i--) {
+      Particle p = powerup.get(i);
+      p.create();
+    } 
+
     // checks interactions between the red particles and the players
     for (int i = rlist.size () - 1; i >= 0; i--) {     
       Particle r = rlist.get(i);
       if (game) {
         r.create();
       }
-      if (r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999) {
+      if (r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999 && gInvince == "false") {
         greenWin();
       }
-      if ( r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999) {
+      if ( r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999 && rInvince == "false") {
         redWin();
       }
     }
@@ -79,10 +123,10 @@ void draw() {
       if (game) {
         g.create();
       }  
-      if (g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999) {
+      if (g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999 && gInvince == "false") {
         greenWin();
       }
-      if (g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999) {
+      if (g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999 && rInvince == "false") {
         redWin();
       }
     }
