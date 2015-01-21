@@ -60,6 +60,15 @@ void draw() {
     x2-=velx2;
     y2+=vely2;
 
+     if(rInvince == "true"){
+      fill(0,100,255);
+      rect(x1,y1,30,30);
+    }
+    if(gInvince == "true"){
+      fill(0,100,255);
+      rect(x2,y2,30,30);
+    }
+
     //creation of the blocks/players
     fill(255, 0, 0);
     rect(x1, y1, 25, 25);
@@ -70,19 +79,17 @@ void draw() {
     //prevents moving in the direction opposite to current movement
     movement();   
 
-    if(rInvince
-
-    for (int i = powerup.size () - 1; i >= 0; i--) {
+   for (int i = powerup.size () - 1; i >= 0; i--) {
       Particle p = powerup.get(i);
       if (p.px < x1 + 9.999 && p.px > x1 - 9.999 && p.py > y1 - 9.999 && p.py < y1 + 9.999) {
-        gInvince = "true";
+        rInvince = "true";
         frameCount = currentFrame;
         powerup.remove(i);
         px = random(200, width - 200);
         py = random(200, height - 200);
       } 
       if (p.px < x2 + 9.999 && p.px > x2 - 9.999 && p.py > y2 - 9.999 && p.py < y2 + 9.999) {
-        rInvince = "true";
+        gInvince = "true";
         frameCount = currentFrame;
         powerup.remove(i);
         px = random(200, width - 200);
@@ -109,10 +116,10 @@ void draw() {
       if (game) {
         r.create();
       }
-      if (r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999 && gInvince == "false") {
+      if (r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999 && rInvince == "false") {
         greenWin();
       }
-      if ( r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999 && rInvince == "false") {
+      if ( r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999 && gInvince == "false") {
         redWin();
       }
     }
@@ -123,10 +130,10 @@ void draw() {
       if (game) {
         g.create();
       }  
-      if (g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999 && gInvince == "false") {
+      if (g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999 && rInvince == "false") {
         greenWin();
       }
-      if (g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999 && rInvince == "false") {
+      if (g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999 && gInvince == "false") {
         redWin();
       }
     }
