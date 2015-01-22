@@ -1,10 +1,12 @@
 int x1, y1, x2, y2, velx1, vely1, velx2, vely2, currentFrame;
 float px, py;
+float rx, ry;
 String rdir, gdir, rInvince, gInvince;
 boolean game; 
 ArrayList<Particle> rlist = new ArrayList<Particle>();
 ArrayList<Particle> glist = new ArrayList<Particle>();
 ArrayList<Particle> powerup = new ArrayList<Particle>();
+ArrayList<Particle> resetitem = new ArrayList<Particle>();
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -47,6 +49,12 @@ void draw() {
     if (frameCount % 1 == 0) {
       rlist.add(new Particle(x1, y1, 255, 0, 0, 5));
       glist.add(new Particle(x2, y2, 0, 255, 0, 5));
+    }
+    for(int i = 0; i < 1; i++){
+    if(frameCount % 600 == 0){
+      
+     resetitem.add(new Particle(random(200,width-200), random(200, height-200), 255, 0, 255, 20)); 
+    }
     }
 
     //adds a powerup
@@ -96,7 +104,17 @@ void draw() {
         py = random(200, height - 200);
       }
     }
-
+    
+    for (int i = resetitem.size () - 1; i >= 0; i--) {
+      Particle r = resetitem.get(i);
+      if (r.px < x1 + 9.999 && r.px > x1 - 9.999 && r.py > y1 - 9.999 && r.py < y1 + 9.999 || r.px < x2 + 9.999 && r.px > x2 - 9.999 && r.py > y2 - 9.999 && r.py < y2 + 9.999) {
+        resetitem.remove(i);
+        for(int j = rlist.size() - 1; j >= 0; j--){
+          rlist.remove(j);
+          glist.remove(j);
+        }
+      } 
+    }
     if (rInvince == "true" && frameCount - currentFrame > 180) {
       rInvince = "false";
     }
@@ -108,6 +126,11 @@ void draw() {
     for (int i = powerup.size () - 1; i >= 0; i--) {
       Particle p = powerup.get(i);
       p.create();
+    } 
+    
+    for (int i = resetitem.size () - 1; i >= 0; i--) {
+      Particle r = resetitem.get(i);
+      r.create();
     } 
 
     // checks interactions between the red particles and the players
@@ -168,24 +191,24 @@ void directionSetup() {
   }
 }
 
-//movement for both arrow keys and WASD
+//movement for both arrow keys and WASD (and wasd for CAPS LOCK issues)
 //prevents moving in the direction opposite to current movement
 void movement() {
-
+  
   if (keyPressed) {
-    if (key == 'w' && rdir != "down") {
+    if ((key == 'w' || key == 'W') && rdir != "down") {
       velx1 = 0;
       vely1 = -2;
     }
-    if (key == 's' && rdir != "up") {
+    if ((key == 's' || key == 'S') && rdir != "up") {
       velx1 = 0;
       vely1 = 2;
     }
-    if (key == 'a' && rdir != "right") {
+    if ((key == 'a' || key == 'A') && rdir != "right") {
       velx1 = -2;
       vely1 = 0;
     }
-    if (key == 'd' && rdir != "left") {
+    if ((key == 'd' || key == 'D') && rdir != "left") {
       velx1 = 2;
       vely1 = 0;
     }      
