@@ -2,11 +2,12 @@ int x1, y1, x2, y2, velx1, vely1, velx2, vely2, currentFrame;
 float px, py;
 float rx, ry;
 String rdir, gdir, rInvince, gInvince;
-boolean game; 
+boolean game, title; 
 ArrayList<Particle> rlist = new ArrayList<Particle>();
 ArrayList<Particle> glist = new ArrayList<Particle>();
 ArrayList<Particle> powerup = new ArrayList<Particle>();
 ArrayList<Particle> resetitem = new ArrayList<Particle>();
+PImage TScreen;
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -18,10 +19,12 @@ void setup() {
   y2 = 75;
   px = width/2;
   py = 3*height/4;
-
-  velx1 = velx2 = 2;
+  TScreen = loadImage("TitleScreen.png");
+  velx1 = 2;
+  velx2 = -2;
   rectMode(CENTER);
   game = false;
+  title = true;
   rInvince = gInvince = "false";
 }
 
@@ -30,11 +33,19 @@ void draw() {
   //sets each movement as a string to represent direction
   directionSetup();
 
+  if (title) {
+    image(TScreen, 0, 0, width, height);
+  }
+
   //waits for an enter input to begin the game
   if (keyPressed) {
     if (key == ENTER) {
       game = true;
+      title = false;
     }
+  }
+  if(!game){
+   text("woo", width/2 - 50, height/2);  
   }
   if (game) {
 
@@ -50,11 +61,11 @@ void draw() {
       rlist.add(new Particle(x1, y1, 255, 0, 0, 5));
       glist.add(new Particle(x2, y2, 0, 255, 0, 5));
     }
-    for(int i = 0; i < 1; i++){
-    if(frameCount % 600 == 0){
-      
-     resetitem.add(new Particle(random(200,width-200), random(200, height-200), 255, 0, 255, 20)); 
-    }
+    for (int i = 0; i < 1; i++) {
+      if (frameCount % 600 == 0) {
+
+        resetitem.add(new Particle(random(200, width-200), random(200, height-200), 255, 0, 255, 20));
+      }
     }
 
     //adds a powerup
@@ -65,16 +76,16 @@ void draw() {
     //changes the location of the players through velocities
     x1+=velx1;
     y1+=vely1;
-    x2-=velx2;
+    x2+=velx2;
     y2+=vely2;
 
-     if(rInvince == "true"){
-      fill(0,100,255);
-      rect(x1,y1,30,30);
+    if (rInvince == "true") {
+      fill(0, 100, 255);
+      rect(x1, y1, 30, 30);
     }
-    if(gInvince == "true"){
-      fill(0,100,255);
-      rect(x2,y2,30,30);
+    if (gInvince == "true") {
+      fill(0, 100, 255);
+      rect(x2, y2, 30, 30);
     }
 
     //creation of the blocks/players
@@ -87,7 +98,7 @@ void draw() {
     //prevents moving in the direction opposite to current movement
     movement();   
 
-   for (int i = powerup.size () - 1; i >= 0; i--) {
+    for (int i = powerup.size () - 1; i >= 0; i--) {
       Particle p = powerup.get(i);
       if (p.px < x1 + 9.999 && p.px > x1 - 9.999 && p.py > y1 - 9.999 && p.py < y1 + 9.999) {
         rInvince = "true";
@@ -104,16 +115,16 @@ void draw() {
         py = random(200, height - 200);
       }
     }
-    
+
     for (int i = resetitem.size () - 1; i >= 0; i--) {
       Particle r = resetitem.get(i);
       if (r.px < x1 + 9.999 && r.px > x1 - 9.999 && r.py > y1 - 9.999 && r.py < y1 + 9.999 || r.px < x2 + 9.999 && r.px > x2 - 9.999 && r.py > y2 - 9.999 && r.py < y2 + 9.999) {
         resetitem.remove(i);
-        for(int j = rlist.size() - 1; j >= 0; j--){
+        for (int j = rlist.size () - 1; j >= 0; j--) {
           rlist.remove(j);
           glist.remove(j);
         }
-      } 
+      }
     }
     if (rInvince == "true" && frameCount - currentFrame > 180) {
       rInvince = "false";
@@ -127,7 +138,7 @@ void draw() {
       Particle p = powerup.get(i);
       p.create();
     } 
-    
+
     for (int i = resetitem.size () - 1; i >= 0; i--) {
       Particle r = resetitem.get(i);
       r.create();
@@ -140,10 +151,16 @@ void draw() {
         r.create();
       }
       if (r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999 && rInvince == "false") {
+        game = false;
+        if(!game){
         greenWin();
+        }
       }
       if ( r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999 && gInvince == "false") {
+        game = false;
+        if(!game){
         redWin();
+        }
       }
     }
 
@@ -154,10 +171,16 @@ void draw() {
         g.create();
       }  
       if (g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999 && rInvince == "false") {
-        greenWin();
+        game = false;
+        if(!game){
+          greenWin();
+        }
       }
       if (g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999 && gInvince == "false") {
+        game = false;
+        if(!game){
         redWin();
+        }
       }
     }
   }
@@ -194,7 +217,7 @@ void directionSetup() {
 //movement for both arrow keys and WASD (and wasd for CAPS LOCK issues)
 //prevents moving in the direction opposite to current movement
 void movement() {
-  
+
   if (keyPressed) {
     if ((key == 'w' || key == 'W') && rdir != "down") {
       velx1 = 0;
@@ -220,12 +243,12 @@ void movement() {
       velx2 = 0;
       vely2 = 2;
     }
-    if (keyCode == LEFT && gdir != "left") {
-      velx2 = 2;
+    if (keyCode == LEFT && gdir != "right") {
+      velx2 = -2;
       vely2 = 0;
     }
-    if (keyCode == RIGHT && gdir != "right") {
-      velx2 = -2;
+    if (keyCode == RIGHT && gdir != "left") {
+      velx2 = 2;
       vely2 = 0;
     }
   }
@@ -238,7 +261,18 @@ void redWin() {
   fill(255, 0, 0);
   textSize(72);
   text("Red Wins", width/3, height/2);
-  game = false;
+  x1 = 75;
+  y1 = 75;
+  x2 = width - 75;
+  y2 = 75;
+  px = width/2;
+  py = 3*height/4;
+  velx1 = velx2 = 2;
+  rInvince = gInvince = "false";
+  ArrayList<Particle> rlist = new ArrayList<Particle>();
+  ArrayList<Particle> glist = new ArrayList<Particle>();
+  ArrayList<Particle> powerup = new ArrayList<Particle>();
+  ArrayList<Particle> resetitem = new ArrayList<Particle>();
 }
 
 
@@ -249,6 +283,17 @@ void greenWin() {
   fill(0, 255, 0);
   textSize(72);
   text("Green Wins", width/3, height/2);
-  game = false;
+  x1 = 75;
+  y1 = 75;
+  x2 = width - 75;
+  y2 = 75;
+  px = width/2;
+  py = 3*height/4;
+  velx1 = velx2 = 2;
+  rInvince = gInvince = "false";
+  ArrayList<Particle> rlist = new ArrayList<Particle>();
+  ArrayList<Particle> glist = new ArrayList<Particle>();
+  ArrayList<Particle> powerup = new ArrayList<Particle>();
+  ArrayList<Particle> resetitem = new ArrayList<Particle>();
 }
 
