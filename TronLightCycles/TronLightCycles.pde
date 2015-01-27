@@ -23,6 +23,11 @@ ArrayList<Particle> powerup = new ArrayList<Particle>();
 ArrayList<Particle> resetitem = new ArrayList<Particle>();
 PImage TScreen;
 
+//audio information [from internet]
+import ddf.minim.*;
+
+AudioPlayer player;
+Minim minim;//audio context
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -42,6 +47,11 @@ void setup() {
   title = true;
   rInvince = gInvince = "false";
   textAlign(CENTER, CENTER);
+
+  //audio information [from internet]
+  minim= new Minim(this);
+  player= minim.loadFile("Haywyre-Insight.mp3", 2048);
+  player.play();
 }
 
 void draw() {
@@ -86,17 +96,28 @@ void draw() {
       rlist.add(new Particle(x1, y1, 255, 0, 0, 5));
       glist.add(new Particle(x2, y2, 0, 255, 0, 5));
     }
-  
-    //adds a reset item every 10 seconds  
-    if (frameCount % 600 == 0) {
-      resetitem.add(new Particle(random(200, width-200), random(200, height-200), 255, 0, 255, 20));
-    }
-
 
     //adds a powerup
     for (int i = 0; i < 1; i++) {
       powerup.add(new Particle(px, py, 0, 100, 255, 20));
     }
+
+    //adds a reset item every 10 seconds  
+    if (frameCount % 600 == 0) {
+      resetitem.add(new Particle(random(200, width-200), random(200, height-200), 255, 0, 255, 20));
+    }
+
+    //draw a powerup particle
+    for (int i = powerup.size () - 1; i >= 0; i--) {
+      Particle p = powerup.get(i);
+      p.create();
+    } 
+
+    //draws all reset items
+    for (int i = resetitem.size () - 1; i >= 0; i--) {
+      Particle r = resetitem.get(i);
+      r.create();
+    } 
 
     //changes the location of the players through velocities
     x1+=velx1;
@@ -104,21 +125,21 @@ void draw() {
     x2+=velx2;
     y2+=vely2;
 
+    //creation of the blocks/players
+    fill(255, 0, 0);
+    rect(x1, y1, 5, 5);
+    fill(0, 255, 0);
+    rect(x2, y2, 5, 5);
+
     //indicates invincibility with a blue border
     if (rInvince == "true") {
       fill(0, 100, 255);
-      rect(x1, y1, 30, 30);
+      rect(x1, y1, 15, 15);
     }
     if (gInvince == "true") {
       fill(0, 100, 255);
-      rect(x2, y2, 30, 30);
+      rect(x2, y2, 15, 15);
     }
-
-    //creation of the blocks/players
-    fill(255, 0, 0);
-    rect(x1, y1, 25, 25);
-    fill(0, 255, 0);
-    rect(x2, y2, 25, 25);
 
     //movement for both arrow keys and WASD
     //prevents moving in the direction opposite to current movement
@@ -162,18 +183,6 @@ void draw() {
         }
       }
     }
-    
-    //draw a powerup particle
-    for (int i = powerup.size () - 1; i >= 0; i--) {
-      Particle p = powerup.get(i);
-      p.create();
-    } 
-    
-    //draws all reset items
-    for (int i = resetitem.size () - 1; i >= 0; i--) {
-      Particle r = resetitem.get(i);
-      r.create();
-    } 
 
     // checks interactions between the red particles and the players
     for (int i = rlist.size () - 1; i >= 0; i--) {     
@@ -332,5 +341,13 @@ void greenWin() {
   velx2 = -2;
   vely1 = vely2 = 0;
   rInvince = gInvince = "false";
+}
+
+//audio information [from internet]
+void stop()
+{
+  player.close();
+  minim.stop();
+  super.stop();
 }
 
