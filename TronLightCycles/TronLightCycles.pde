@@ -1,13 +1,28 @@
+//the red block is x1 and y1, the green block is x2 and y2
+//currentFrame is used as a counter for the invincibility
 int x1, y1, x2, y2, velx1, vely1, velx2, vely2, currentFrame;
+
+//powerup initial position
 float px, py;
+
+//variable for reset item position
 float rx, ry;
+
+//rdir and gdir are meant to help with movement
+//rInvince and gInvince indicate invincibility
 String rdir, gdir, rInvince, gInvince;
+
+//whether the game is active, whether the title screen is active
 boolean game, title; 
+
+//rlist and glist are the particle trails
+//power up and reset item are the invincibility and reset item blocks respectively
 ArrayList<Particle> rlist = new ArrayList<Particle>();
 ArrayList<Particle> glist = new ArrayList<Particle>();
 ArrayList<Particle> powerup = new ArrayList<Particle>();
 ArrayList<Particle> resetitem = new ArrayList<Particle>();
 PImage TScreen;
+
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -26,6 +41,7 @@ void setup() {
   game = false;
   title = true;
   rInvince = gInvince = "false";
+  textAlign(CENTER, CENTER);
 }
 
 void draw() {
@@ -33,20 +49,29 @@ void draw() {
   //sets each movement as a string to represent direction
   directionSetup();
 
+  //creates the title screen only at the beginning of the game
   if (title) {
     image(TScreen, 0, 0, width, height);
   }
 
-  //waits for an enter input to begin the game
+  //waits for an enter input to begin the game, also ends the title screen, and resets the game every time
   if (keyPressed) {
     if (key == ENTER) {
       game = true;
       title = false;
+      for (int i = rlist.size () - 1; i >= 0; i--) {
+        rlist.remove(i);
+        glist.remove(i);
+      }
+      for (int i = powerup.size () - 1; i >= 0; i--) {
+        powerup.remove(i);
+      }
+      for (int i = resetitem.size () - 1; i >= 0; i--) {
+        resetitem.remove(i);
+      }
     }
   }
-  if(!game){
-   text("woo", width/2 - 50, height/2);  
-  }
+
   if (game) {
 
     //simple creation of a grid background
@@ -61,12 +86,12 @@ void draw() {
       rlist.add(new Particle(x1, y1, 255, 0, 0, 5));
       glist.add(new Particle(x2, y2, 0, 255, 0, 5));
     }
-    for (int i = 0; i < 1; i++) {
-      if (frameCount % 600 == 0) {
-
-        resetitem.add(new Particle(random(200, width-200), random(200, height-200), 255, 0, 255, 20));
-      }
+  
+    //adds a reset item every 10 seconds  
+    if (frameCount % 600 == 0) {
+      resetitem.add(new Particle(random(200, width-200), random(200, height-200), 255, 0, 255, 20));
     }
+
 
     //adds a powerup
     for (int i = 0; i < 1; i++) {
@@ -79,6 +104,7 @@ void draw() {
     x2+=velx2;
     y2+=vely2;
 
+    //indicates invincibility with a blue border
     if (rInvince == "true") {
       fill(0, 100, 255);
       rect(x1, y1, 30, 30);
@@ -98,6 +124,7 @@ void draw() {
     //prevents moving in the direction opposite to current movement
     movement();   
 
+    //checks if either player gets the invincibility power up, also sets them to invincible, and resets power up
     for (int i = powerup.size () - 1; i >= 0; i--) {
       Particle p = powerup.get(i);
       if (p.px < x1 + 9.999 && p.px > x1 - 9.999 && p.py > y1 - 9.999 && p.py < y1 + 9.999) {
@@ -116,6 +143,15 @@ void draw() {
       }
     }
 
+    //limits the invincibility to three seconds
+    if (rInvince == "true" && frameCount - currentFrame > 180) {
+      rInvince = "false";
+    }
+    if (gInvince == "true" && frameCount - currentFrame > 180) {
+      gInvince = "false";
+    }
+
+    //checks if a reset item is used
     for (int i = resetitem.size () - 1; i >= 0; i--) {
       Particle r = resetitem.get(i);
       if (r.px < x1 + 9.999 && r.px > x1 - 9.999 && r.py > y1 - 9.999 && r.py < y1 + 9.999 || r.px < x2 + 9.999 && r.px > x2 - 9.999 && r.py > y2 - 9.999 && r.py < y2 + 9.999) {
@@ -126,19 +162,14 @@ void draw() {
         }
       }
     }
-    if (rInvince == "true" && frameCount - currentFrame > 180) {
-      rInvince = "false";
-    }
-    if (gInvince == "true" && frameCount - currentFrame > 180) {
-      gInvince = "false";
-    }
-
+    
     //draw a powerup particle
     for (int i = powerup.size () - 1; i >= 0; i--) {
       Particle p = powerup.get(i);
       p.create();
     } 
-
+    
+    //draws all reset items
     for (int i = resetitem.size () - 1; i >= 0; i--) {
       Particle r = resetitem.get(i);
       r.create();
@@ -151,15 +182,19 @@ void draw() {
         r.create();
       }
       if (r.px < x1 + .999 && r.px > x1 - .999 && r.py > y1 - .999 && r.py < y1 + .999 && rInvince == "false") {
+        rlist.remove(i);
+        glist.remove(i);
         game = false;
-        if(!game){
-        greenWin();
+        if (!game) {
+          greenWin();
         }
       }
       if ( r.px < x2 + .999 && r.px > x2 - .999 && r.py > y2 - .999 && r.py < y2 + .999 && gInvince == "false") {
+        rlist.remove(i);
+        glist.remove(i);
         game = false;
-        if(!game){
-        redWin();
+        if (!game) {
+          redWin();
         }
       }
     }
@@ -171,15 +206,19 @@ void draw() {
         g.create();
       }  
       if (g.px < x1 + .999 && g.px > x1 - .999 && g.py > y1 - .999 && g.py < y1 + .999 && rInvince == "false") {
+        rlist.remove(i);
+        glist.remove(i); 
         game = false;
-        if(!game){
+        if (!game) {
           greenWin();
         }
       }
       if (g.px < x2 + .999 && g.px > x2 - .999 && g.py > y2 - .999 && g.py < y2 + .999 && gInvince == "false") {
+        rlist.remove(i);
+        glist.remove(i); 
         game = false;
-        if(!game){
-        redWin();
+        if (!game) {
+          redWin();
         }
       }
     }
@@ -260,19 +299,18 @@ void redWin() {
   background(255);
   fill(255, 0, 0);
   textSize(72);
-  text("Red Wins", width/3, height/2);
+  text("Red Wins", width/2, height/2);
+  text("Press ENTER to play again", width/2, 3*height/4);
   x1 = 75;
   y1 = 75;
   x2 = width - 75;
   y2 = 75;
   px = width/2;
   py = 3*height/4;
-  velx1 = velx2 = 2;
+  velx1 = 2;
+  velx2 = -2;
+  vely1 = vely2 = 0;
   rInvince = gInvince = "false";
-  ArrayList<Particle> rlist = new ArrayList<Particle>();
-  ArrayList<Particle> glist = new ArrayList<Particle>();
-  ArrayList<Particle> powerup = new ArrayList<Particle>();
-  ArrayList<Particle> resetitem = new ArrayList<Particle>();
 }
 
 
@@ -282,18 +320,17 @@ void greenWin() {
   background(255);
   fill(0, 255, 0);
   textSize(72);
-  text("Green Wins", width/3, height/2);
+  text("Green Wins", width/2, height/2);
+  text("Press ENTER to play again", width/2, 3*height/4);
   x1 = 75;
   y1 = 75;
   x2 = width - 75;
   y2 = 75;
   px = width/2;
   py = 3*height/4;
-  velx1 = velx2 = 2;
+  velx1 = 2;
+  velx2 = -2;
+  vely1 = vely2 = 0;
   rInvince = gInvince = "false";
-  ArrayList<Particle> rlist = new ArrayList<Particle>();
-  ArrayList<Particle> glist = new ArrayList<Particle>();
-  ArrayList<Particle> powerup = new ArrayList<Particle>();
-  ArrayList<Particle> resetitem = new ArrayList<Particle>();
 }
 
